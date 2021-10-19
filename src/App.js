@@ -5,31 +5,48 @@ export default function App() {
   return <Game />;
 }
 
+class DeleteBox extends React.Component {
+  render() {
+    //const color = this.props.selected ? 'white' : 'rgb(224, 224, 224)';
+    //this.setState({bgColor: color});
+    return (
+      <button
+        className="delbutton"
+        style={{ backgroundColor: this.props.bgColor }}
+        onClick={this.props.onClick}
+      >
+        Del
+      </button>
+    );
+  }
+}
+
 class Square extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      bgColor: this.props.selectedColor? 'red' : 'green',
+      bgColor: 'white',
     };
-    //this.onClick2 = this.onClick2.bind(this);
   }
 
-  //onClick2(event) {
-  //  //this.props.onClick();
-  //  () => {this.setState({bgColor:'white'}) };
-  //}
-
   render() {
+    //const color = this.props.selected ? 'white' : 'rgb(224, 224, 224)';
+    //this.setState({bgColor: color});
     return (
       <button
         className="square"
-        style={{ backgroundColor: this.state.bgColor}}
-        onClick={() => {this.setState({bgColor:'white'}), this.props.onClick() } }
+        style={{ backgroundColor: this.props.bgColor }}
+        //  onClick={() => {
+        //    this.setState({
+        //      bgColor: color,
+        //    }),
+        //      this.props.onClick();
+        //  }}
         //onClick={() => {this.setState({bgColor:'white'}) } }
-        //onClick={this.onClick2}
+        onClick={this.props.onClick}
         //onClick={() =>{this.props.onClick()}}
       >
-        {this.props.selectedColor? 'a' : 'b'}
+        {this.props.number}
       </button>
     );
   }
@@ -37,7 +54,11 @@ class Square extends React.Component {
 
 class InputSquare extends React.Component {
   render() {
-    return <button className="square">{this.props.value}</button>;
+    return (
+      <button className="square" onClick={this.props.onClick}>
+        {this.props.value}
+      </button>
+    );
   }
 }
 
@@ -54,7 +75,8 @@ class Board extends React.Component {
     return (
       <Square
         onClick={() => this.props.onClick(i)}
-        selectedColor={this.props.selected[i]}
+        bgColor={!this.props.selected[i] ? 'white' : 'rgb(224, 224, 224)'}
+        number={this.props.squares[i]}
       />
     );
   }
@@ -89,7 +111,7 @@ class Board extends React.Component {
 
 class InputInterface extends React.Component {
   renderSquare(i) {
-    return <InputSquare value={i} />;
+    return <InputSquare value={i} onClick={() => this.props.onClick(i)} />;
   }
 
   render() {
@@ -128,9 +150,8 @@ class Game extends React.Component {
   }
 
   handleClickLeft(i) {
-    const marked = this.state.selected[i];
     const squaselected = this.state.selected.slice();
-    squaselected[i] = !marked[i]; //flip
+    squaselected[i] = !this.state.selected[i]; //flip
 
     this.setState({
       squares: this.state.squares,
@@ -138,9 +159,41 @@ class Game extends React.Component {
     });
   }
 
+  handleClickRight(i) {
+    const squares = this.state.squares.slice();
+    const squaselected = this.state.selected.slice();
+    for (let a = 0; a < squaselected.length; a++) {
+      if (squaselected[a]) {
+        squaselected[a] = false;
+        squares[a] = i;
+      }
+    }
+
+    this.setState({
+      squares: squares,
+      selected: squaselected,
+    });
+  }
+
+  handleDelClick(i) {
+    const squares = this.state.squares.slice();
+    const squaselected = this.state.selected.slice();
+    for (let a = 0; a < squaselected.length; a++) {
+      if (squaselected[a]) {
+        squaselected[a] = false;
+        squares[a] = null;
+      }
+    }
+
+    this.setState({
+      squares: squares,
+      selected: squaselected,
+    });
+  }
+
   render() {
     return (
-      <div className="game">
+      <div className="game" ref={}>
         <div className="game-board">
           <Board
             squares={this.state.squares}
@@ -153,7 +206,8 @@ class Game extends React.Component {
           <ol>{/* TODO */}</ol>
         </div>
         <div className="game-board">
-          <InputInterface />
+          <InputInterface onClick={(i) => this.handleClickRight(i)} />
+          <DeleteBox onClick={(i) => this.handleDelClick(i)} />
         </div>
         <div className="game-info">
           <div>{/* status */}</div>
