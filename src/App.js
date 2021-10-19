@@ -11,22 +11,23 @@ class Square extends React.Component {
     this.state = {
       bgColor: this.props.selectedColor? 'red' : 'green',
     };
-    this.onClick2 = this.onClick2.bind(this);
+    //this.onClick2 = this.onClick2.bind(this);
   }
 
-  onClick2(event) {
-    //this.props.onClick();
-    () => {this.setState({bgColor:'white'}) };
-  }
+  //onClick2(event) {
+  //  //this.props.onClick();
+  //  () => {this.setState({bgColor:'white'}) };
+  //}
 
   render() {
     return (
       <button
         className="square"
         style={{ backgroundColor: this.state.bgColor}}
-        //onClick={() => {this.props.onClick(), () => {this.setState({bgColor:'white'})} } }
+        onClick={() => {this.setState({bgColor:'white'}), this.props.onClick() } }
         //onClick={() => {this.setState({bgColor:'white'}) } }
-        onClick={this.onClick2}
+        //onClick={this.onClick2}
+        //onClick={() =>{this.props.onClick()}}
       >
         {this.props.selectedColor? 'a' : 'b'}
       </button>
