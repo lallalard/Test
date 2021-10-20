@@ -81,6 +81,18 @@ class Board extends React.Component {
     );
   }
 
+  renderRow(i) {
+    let row = []
+    for (let a = 0; a < 9; a++) {
+      row.push(this.renderSquare((i*9)+a))
+    }
+    return (
+      <div className="board-row">
+          {row}
+      </div>
+    );
+  }
+
   //onClick={(i) => this.handleClickLeft(i)
 
   render() {
@@ -89,21 +101,15 @@ class Board extends React.Component {
     return (
       <div>
         <div className="status">{status}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+        {this.renderRow(0)}
+        {this.renderRow(1)}
+        {this.renderRow(2)}
+        {this.renderRow(3)}
+        {this.renderRow(4)}
+        {this.renderRow(5)}
+        {this.renderRow(6)}
+        {this.renderRow(7)}
+        {this.renderRow(7)}
       </div>
     );
   }
