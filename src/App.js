@@ -180,8 +180,10 @@ class Game extends React.Component {
     this.state = {
       squares: Array(81).fill(null),
       selected: Array(81).fill(false),
+      correct: Array(81).fill(null),
+      message: '',
     };
-    this.message = '';
+    
   }
 
   handleClickLeft(i) {
@@ -191,6 +193,7 @@ class Game extends React.Component {
     this.setState({
       squares: this.state.squares,
       selected: squaselected,
+      correct: Array(81).fill(null),
       message: '',
     });
   }
@@ -208,6 +211,7 @@ class Game extends React.Component {
     this.setState({
       squares: squares,
       selected: squaselected,
+      correct: Array(81).fill(null),
       message: '',
     });
   }
@@ -225,6 +229,7 @@ class Game extends React.Component {
     this.setState({
       squares: squares,
       selected: squaselected,
+      correct: Array(81).fill(null),
       message: '',
     });
   }
