@@ -33,6 +33,21 @@ ul {
   width: 34px;
 }
 
+.squareright {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 42px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 42px;
+}
+
 .delbutton {
   background: #fff;
   border: 1px solid #999;
@@ -40,12 +55,27 @@ ul {
   font-size: 24px;
   font-weight: bold;
   line-height: 34px;
-  height: 34px;
+  height: 42px;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 51px;
+  width: 62px;
+}
+
+.checkbutton {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 42px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 63px;
 }
 
 .square:focus {

@@ -1,14 +1,14 @@
 import React from 'react';
 import './style.css';
 
+const playingFieldConfig = 10
+
 export default function App() {
   return <Game />;
 }
 
 class DeleteBox extends React.Component {
   render() {
-    //const color = this.props.selected ? 'white' : 'rgb(224, 224, 224)';
-    //this.setState({bgColor: color});
     return (
       <button
         className="delbutton"
@@ -16,6 +16,20 @@ class DeleteBox extends React.Component {
         onClick={this.props.onClick}
       >
         Del
+      </button>
+    );
+  }
+}
+
+class CheckBox extends React.Component {
+  render() {
+    return (
+      <button
+        className="checkbutton"
+        style={{ backgroundColor: this.props.bgColor }}
+        onClick={this.props.onClick}
+      >
+        Test
       </button>
     );
   }
@@ -55,7 +69,7 @@ class Square extends React.Component {
 class InputSquare extends React.Component {
   render() {
     return (
-      <button className="square" onClick={this.props.onClick}>
+      <button className="squareright" onClick={this.props.onClick}>
         {this.props.value}
       </button>
     );
@@ -74,16 +88,16 @@ class Board extends React.Component {
   renderSquare(i) {
     var resColor;
     if (!isGrayArea(i)) {
-      if (this.props.selected[i]) {
-        resColor = 'rgb(217, 255, 250)'
-      } else {
+      if (!this.props.selected[i]) {
         resColor = 'white'
+      } else {
+        resColor = 'rgb(217, 255, 250)' //check colors
       }
     } else {
-      if (this.props.selected[i]) {
-        resColor = 'rgb(195, 228, 223'
-      } else {
+      if (!this.props.selected[i]) {
         resColor = 'rgb(238, 238, 238)'
+      } else {
+        resColor = 'rgb(195, 228, 223' //check colors
       }
     }
 
@@ -107,8 +121,6 @@ class Board extends React.Component {
       </div>
     );
   }
-
-  //onClick={(i) => this.handleClickLeft(i)
 
   render() {
     const status = 'Next player: X';
@@ -169,6 +181,7 @@ class Game extends React.Component {
       squares: Array(81).fill(null),
       selected: Array(81).fill(false),
     };
+    this.message = '';
   }
 
   handleClickLeft(i) {
@@ -178,6 +191,7 @@ class Game extends React.Component {
     this.setState({
       squares: this.state.squares,
       selected: squaselected,
+      message: '',
     });
   }
 
@@ -194,10 +208,11 @@ class Game extends React.Component {
     this.setState({
       squares: squares,
       selected: squaselected,
+      message: '',
     });
   }
 
-  handleDelClick(i) {
+  handleDelClick() {
     const squares = this.state.squares.slice();
     const squaselected = this.state.selected.slice();
     for (let a = 0; a < squaselected.length; a++) {
@@ -210,6 +225,21 @@ class Game extends React.Component {
     this.setState({
       squares: squares,
       selected: squaselected,
+      message: '',
+    });
+  }
+
+  handleCheckClick() {
+    const squares = this.state.squares.slice();
+    var message = '';
+    if(checkTotal(squares)) {
+      message = 'Check'
+    }
+
+    this.setState({
+      squares: squares,
+      selected: Array(81).fill(false),
+      message: message,
     });
   }
 
@@ -229,11 +259,13 @@ class Game extends React.Component {
         </div>
         <div className="game-board">
           <InputInterface onClick={(i) => this.handleClickRight(i)} />
-          <DeleteBox onClick={(i) => this.handleDelClick(i)} />
+          <DeleteBox onClick={() => this.handleDelClick()} />
+          <CheckBox onClick={() => this.handleCheckClick()} />
+          <br/><r>{this.state.message}</r>
         </div>
         <div className="game-info">
           <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
+          <ol></ol>
         </div>
       </div>
     );
@@ -248,3 +280,53 @@ function isGrayArea(pos) {
   }
   return false;
 }
+
+function checkTotal(squares) {
+  //mark 1, 2, 3
+  if(checkRows(squares) && checkColumns(squares) && checkBoxes(squares)) {
+    return true
+  }
+  return false;
+}
+
+function checkRows(squares) {
+  for (let a = 0; a<9; a++) {
+    if(!check(squares.filter(number => Math.floor(number/9) === a))) {
+      return false;
+    }
+  }
+  return true;
+}
+function checkColumns(squares) {
+  for (let a = 0; a<9; a++) {
+    if(!check(squares.filter(number => number%9 === a))) {
+      return false;
+    }
+  }
+  return true;
+}
+function checkBoxes(squares) {
+  for (let a = 0; a<9; a++) {
+    if(!check(squares.filter(number => getBox(number) === a))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function getBox(pos) {
+  var rowx = Math.floor(pos/3)%3;
+  var rowy = Math.floor(Math.floor((pos/9))/3);
+  return rowx + 3*rowy;
+}
+
+function check(squaresRow) {
+  for(let a = 1; a<=9; a++) {
+    if(!(squaresRow.indexOf(a) > -1)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
