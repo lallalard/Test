@@ -72,10 +72,25 @@ class Board extends React.Component {
   }
 
   renderSquare(i) {
+    var resColor;
+    if (!isGrayArea(i)) {
+      if (this.props.selected[i]) {
+        resColor = 'rgb(217, 255, 250)'
+      } else {
+        resColor = 'white'
+      }
+    } else {
+      if (this.props.selected[i]) {
+        resColor = 'rgb(195, 228, 223'
+      } else {
+        resColor = 'rgb(238, 238, 238)'
+      }
+    }
+
     return (
       <Square
         onClick={() => this.props.onClick(i)}
-        bgColor={!this.props.selected[i] ? 'white' : 'rgb(224, 224, 224)'}
+        bgColor={resColor}
         number={this.props.squares[i]}
       />
     );
@@ -109,7 +124,7 @@ class Board extends React.Component {
         {this.renderRow(5)}
         {this.renderRow(6)}
         {this.renderRow(7)}
-        {this.renderRow(7)}
+        {this.renderRow(8)}
       </div>
     );
   }
@@ -149,15 +164,16 @@ class InputInterface extends React.Component {
 class Game extends React.Component {
   constructor(props) {
     super(props);
+    //selected Logic
     this.state = {
-      squares: Array(9).fill(null),
-      selected: Array(9).fill(false),
+      squares: Array(81).fill(null),
+      selected: Array(81).fill(false),
     };
   }
 
   handleClickLeft(i) {
     const squaselected = this.state.selected.slice();
-    squaselected[i] = !this.state.selected[i]; //flip
+    squaselected[i] = !this.state.selected[i];//flip
 
     this.setState({
       squares: this.state.squares,
@@ -222,4 +238,13 @@ class Game extends React.Component {
       </div>
     );
   }
+}
+
+function isGrayArea(pos) {
+  var rowx = Math.floor(pos/3)%3;
+  var rowy = Math.floor(Math.floor((pos/9))/3);
+  if (((rowx + rowy) % 2) === 1) {
+    return true;
+  }
+  return false;
 }
