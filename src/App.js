@@ -1,7 +1,17 @@
 import React from 'react';
 import './style.css';
 
-const playingFieldConfig = 10
+const playingFieldConfig = [
+  null, null, null, 9, null, 8, null, 2, null,
+  null, null, 2, null, null, null, null, null, 1,
+  null, null, 1, null, null, 2, 4, 6, 9,
+  null, null, null, 8, null, null, 5, 9, 7,
+  null, null, null, 3, 2, 7, null, 1, null,
+  6, 7, null, null, null, 5, null, null, null,
+  2, null, null, null, 7, 4, null, 5, 3,
+  null, null, null, null, 8, 9, 6, null, null,
+  7, 5, null, 2, null, null, 9, 4, null,
+  ]
 
 export default function App() {
   return <Game />;
@@ -40,25 +50,16 @@ class Square extends React.Component {
     super(props);
     this.state = {
       bgColor: 'white',
+      textColor: 'black'
     };
   }
 
   render() {
-    //const color = this.props.selected ? 'white' : 'rgb(224, 224, 224)';
-    //this.setState({bgColor: color});
     return (
       <button
         className="square"
-        style={{ backgroundColor: this.props.bgColor }}
-        //  onClick={() => {
-        //    this.setState({
-        //      bgColor: color,
-        //    }),
-        //      this.props.onClick();
-        //  }}
-        //onClick={() => {this.setState({bgColor:'white'}) } }
+        style={{ backgroundColor: this.props.bgColor, color: this.props.textColor }}
         onClick={this.props.onClick}
-        //onClick={() =>{this.props.onClick()}}
       >
         {this.props.number}
       </button>
@@ -118,17 +119,23 @@ class Board extends React.Component {
         }
       }
     }
-
-    
-
-
-    return (
-      <Square
-        onClick={() => this.props.onClick(i)}
-        bgColor={resColor}
-        number={this.props.squares[i]}
-      />
-    );
+    if (playingFieldConfig[i] === null) {
+      return (
+        <Square
+          onClick={() => this.props.onClick(i)}
+          textColor='rgb(46, 59, 231)'
+          bgColor={resColor}
+          number={this.props.squares[i]}
+        />
+      );
+    } else {
+      return (
+        <Square
+          bgColor={resColor}
+          number={this.props.squares[i]}
+        />
+      );
+    }
   }
 
   renderRow(i) {
@@ -144,7 +151,7 @@ class Board extends React.Component {
   }
 
   render() {
-    const status = 'Next player: X';
+    const status = 'Soduko (leicht)';
 
     return (
       <div>
@@ -197,8 +204,9 @@ class InputInterface extends React.Component {
 class Game extends React.Component {
   constructor(props) {
     super(props);
+    //startwerte für squares legen.
     this.state = {
-      squares: Array(81).fill(null),
+      squares: playingFieldConfig,
       selected: Array(81).fill(false),
       correct: Array(81).fill(null),
       message: '',
@@ -309,54 +317,11 @@ function isGrayArea(pos) {
   return false;
 }
 
-function checkTotal(squares) {
-  //mark 1, 2, 3
-  if(checkRows(squares) && checkColumns(squares) && checkBoxes(squares)) {
-    return true
-  }
-  return false;
-}
-
-function checkRows(squares) {
-  for (let a = 0; a<9; a++) {
-    if(!check(squares.filter(number => Math.floor(number/9) === a))) {
-      return false;
-    }
-  }
-  return true;
-}
-function checkColumns(squares) {
-  for (let a = 0; a<9; a++) {
-    if(!check(squares.filter(number => number%9 === a))) {
-      return false;
-    }
-  }
-  return true;
-}
-function checkBoxes(squares) {
-  for (let a = 0; a<9; a++) {
-    if(!check(squares.filter(number => getBox(number) === a))) {
-      return false;
-    }
-  }
-  return true;
-}
-
 function getBox(pos) {
   var rowx = Math.floor(pos/3)%3;
   var rowy = Math.floor(Math.floor((pos/9))/3);
   return rowx + 3*rowy;
 }
-
-function check(squaresRow) {
-  for(let a = 0; a<9; a++) {
-    if(!(squaresRow.indexOf(a) > -1)) {
-      return false;
-    }
-  }
-  return true;
-}
-
 
 // zwei
 
