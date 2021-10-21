@@ -82,24 +82,45 @@ class Board extends React.Component {
     this.state = {
       squares: props.squares,
       selected: props.selected,
+      correct: props.correct,
     };
   }
 
   renderSquare(i) {
     var resColor;
-    if (!isGrayArea(i)) {
-      if (!this.props.selected[i]) {
-        resColor = 'white'
-      } else {
+
+    if (this.props.correct[i] === true) {
+      //green
+      if (!isGrayArea(i)) {
         resColor = 'rgb(217, 255, 250)' //check colors
-      }
-    } else {
-      if (!this.props.selected[i]) {
-        resColor = 'rgb(238, 238, 238)'
       } else {
         resColor = 'rgb(195, 228, 223' //check colors
       }
     }
+    else if (this.props.correct[i] === false) {
+      if (!isGrayArea(i)) {
+        resColor = 'rgb(255, 191, 191)' //check colors
+      } else {
+        resColor = 'rgb(218, 163, 163)' //check colors
+      }
+    } else {
+      if (!isGrayArea(i)) {
+        if (!this.props.selected[i]) {
+          resColor = 'white'
+        } else {
+          resColor = 'rgb(201, 209, 255)' //check colors
+        }
+      } else {
+        if (!this.props.selected[i]) {
+          resColor = 'rgb(238, 238, 238)'
+        } else {
+          resColor = 'rgb(159, 172, 226)' //check colors
+        }
+      }
+    }
+
+    
+
 
     return (
       <Square
@@ -176,7 +197,6 @@ class InputInterface extends React.Component {
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    //selected Logic
     this.state = {
       squares: Array(81).fill(null),
       selected: Array(81).fill(false),
@@ -237,13 +257,15 @@ class Game extends React.Component {
   handleCheckClick() {
     const squares = this.state.squares.slice();
     var message = '';
-    if(checkTotal(squares)) {
-      message = 'Check'
-    }
+    //if(checkTotal(squares)) {
+    //  message = 'Check'
+    //}
+    const correct = markTotal(squares);
 
     this.setState({
       squares: squares,
       selected: Array(81).fill(false),
+      correct: correct,
       message: message,
     });
   }
@@ -255,6 +277,7 @@ class Game extends React.Component {
           <Board
             squares={this.state.squares}
             selected={this.state.selected}
+            correct={this.state.correct}
             onClick={(i) => this.handleClickLeft(i)}
           />
         </div>
@@ -326,7 +349,7 @@ function getBox(pos) {
 }
 
 function check(squaresRow) {
-  for(let a = 1; a<=9; a++) {
+  for(let a = 0; a<9; a++) {
     if(!(squaresRow.indexOf(a) > -1)) {
       return false;
     }
@@ -335,3 +358,80 @@ function check(squaresRow) {
 }
 
 
+// zwei
+
+function markTotal(squares) {
+  var corrected = Array(81).fill(null)
+  for (let a = 0; a < 81; a++) {
+    corrected[a] = checkCell(squares, a);
+  }
+  return corrected;
+}
+
+function checkCell(squares, cell) {
+  if(squares[cell] === null) {
+    return false;
+  }
+  if(!violatesRows(squares, cell) && !violatesColumns(squares, cell) && !violatesBoxes(squares, cell)) {
+    return true;
+  }
+  return false;
+}
+
+function violatesRows(squares, cell) {
+  var row = Math.floor(cell/9)
+
+  let res = [];
+  for (let b = 0; b < 81; b++) {
+    if(Math.floor(b/9) === row) {
+      res.push(squares[b]);
+    }
+  }
+  if(violatesDoubleInArray(res, squares[cell])) {
+    return true;
+  }
+  return false;
+}
+
+function violatesColumns(squares, cell) {
+  var col = cell%9;
+
+  let res = [];
+  for (let b = 0; b < 81; b++) {
+    if(b%9 === col) {
+      res.push(squares[b]);
+    }
+  }
+  if(violatesDoubleInArray(res, squares[cell])) {
+    return true;
+  }
+  return false;
+}
+
+function violatesBoxes(squares, cell) {
+  var box = getBox(cell);
+
+  let res = [];
+  for (let b = 0; b < 81; b++) {
+    if(getBox(b) === box) {
+      res.push(squares[b]);
+    }
+  }
+  if(violatesDoubleInArray(res, squares[cell])) {
+    return true;
+  }
+  return false;
+}
+
+function violatesDoubleInArray(squares, value) {
+  var counter = 0;
+  for(let a = 0; a<9; a++) {
+    if(squares[a] === value) {
+      counter++;
+    }
+  }
+  if (counter > 1) {
+    return true;
+  }
+  return false;
+}
